@@ -22,7 +22,8 @@ def _api_key() -> str:
 
 
 def _generate(contents: list, model: str = MODEL_TEXT) -> str:
-    """Call the Gemini generateContent REST endpoint."""
+    """Call the Gemini generateContent REST endpoint with retry on 429."""
+    import time
     key = _api_key()
     url = f"{GEMINI_API_BASE}/models/{model}:generateContent?key={key}"
     payload = {
@@ -32,13 +33,20 @@ def _generate(contents: list, model: str = MODEL_TEXT) -> str:
             "maxOutputTokens": 8192,
         },
     }
-    resp = requests.post(url, json=payload, timeout=120)
-    resp.raise_for_status()
-    data = resp.json()
-    try:
-        return data["candidates"][0]["content"]["parts"][0]["text"]
-    except (KeyError, IndexError) as e:
-        raise RuntimeError(f"Unexpected Gemini response: {data}") from e
+    for attempt in range(4):
+        resp = requests.post(url, json=payload, timeout=120)
+        if resp.status_code == 429:
+            wait = 15 * (attempt + 1)  # 15s, 30s, 45s, 60s
+            print(f"Rate limited — waiting {wait}s before retry {attempt + 1}/3...")
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        data = resp.json()
+        try:
+            return data["candidates"][0]["content"]["parts"][0]["text"]
+        except (KeyError, IndexError) as e:
+            raise RuntimeError(f"Unexpected Gemini response: {data}") from e
+    raise RuntimeError("Gemini rate limit exceeded after retries. Wait a minute and try again.")
 
 
 def _extract_json(text: str) -> dict:
