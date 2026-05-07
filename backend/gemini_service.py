@@ -10,8 +10,8 @@ import base64
 import requests
 
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta"
-MODEL_TEXT  = "gemini-1.5-flash"
-MODEL_HEAVY = "gemini-1.5-flash"
+MODEL_TEXT  = "gemini-2.0-flash"
+MODEL_HEAVY = "gemini-2.0-flash"
 
 
 def _api_key() -> str:
