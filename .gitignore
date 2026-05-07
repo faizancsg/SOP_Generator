@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Node / Vite
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+
+# Editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Secrets
+.env
+.env.local
+*.key
