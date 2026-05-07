@@ -28,3 +28,4 @@ frontend/.vite/
 .env
 .env.local
 *.key
+backend/.env

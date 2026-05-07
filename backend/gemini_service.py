@@ -8,6 +8,16 @@ import re
 import io
 import base64
 import requests
+from pathlib import Path
+
+# Load .env file if present (works in Codespaces, local, anywhere)
+_env_file = Path(__file__).parent / ".env"
+if _env_file.exists():
+    for line in _env_file.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip())
 
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 MODEL_TEXT  = "gemini-2.0-flash-001"
